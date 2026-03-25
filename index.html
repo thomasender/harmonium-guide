@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmonium Chord Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #F5F0E6;
+      --bg-warm: #EDE4D3;
+      --ivory: #FFFEF5;
+      --ivory-dark: #F5EBD9;
+      --wood-dark: #2A1810;
+      --wood-medium: #4A2E20;
+      --terracotta: #C75D3A;
+      --marigold: #E8A838;
+      --sage: #7A9E7E;
+      --gold-glow: #FFD700;
+      --gold-soft: #F4C430;
+      --shadow: rgba(42, 24, 16, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(232, 168, 56, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(199, 93, 58, 0.06) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      color: var(--wood-dark);
+      letter-spacing: 0.02em;
+      position: relative;
+      display: inline-block;
+    }
+
+    h1::before, h1::after {
+      content: '❋';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--terracotta);
+      opacity: 0.6;
+      font-size: 1rem;
+    }
+
+    h1::before { left: -2rem; }
+    h1::after { right: -2rem; }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--wood-medium);
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    .keyboard-container {
+      background: linear-gradient(180deg, var(--bg-warm) 0%, #E5D9C3 100%);
+      border-radius: 20px;
+      padding: 2rem 1.5rem 1.5rem;
+      box-shadow:
+        0 20px 60px var(--shadow),
+        0 8px 20px rgba(42, 24, 16, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    .keyboard-container::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: var(--terracotta);
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    .keyboard {
+      display: flex;
+      position: relative;
+      height: 180px;
+      min-width: fit-content;
+    }
+
+    .key {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .white-key {
+      width: 44px;
+      height: 180px;
+      background: linear-gradient(180deg, var(--ivory) 0%, var(--ivory-dark) 100%);
+      border: 1px solid #D4C9B5;
+      border-radius: 0 0 8px 8px;
+      margin-right: 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 10px;
+      box-shadow:
+        0 4px 8px var(--shadow),
+        inset 0 -3px 6px rgba(0,0,0,0.05);
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .white-key:hover {
+      background: linear-gradient(180deg, #FFF9E6 0%, #F5E8D0 100%);
+    }
+
+    .white-key.active {
+      background: linear-gradient(180deg, #FFF3C4 0%, var(--gold-soft) 100%);
+      box-shadow:
+        0 4px 8px var(--shadow),
+        0 0 30px rgba(255, 215, 0, 0.4),
+        inset 0 -3px 6px rgba(0,0,0,0.05);
+    }
+
+    .white-key.dimmed {
+      opacity: 0.5;
+    }
+
+    .black-key {
+      position: absolute;
+      width: 28px;
+      height: 110px;
+      background: linear-gradient(180deg, var(--wood-dark) 0%, #1A0F0A 100%);
+      border-radius: 0 0 6px 6px;
+      z-index: 2;
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.4),
+        inset 0 -4px 8px rgba(0,0,0,0.3);
+      top: 0;
+    }
+
+    .black-key:hover {
+      background: linear-gradient(180deg, #3A2820 0%, #2A1810 100%);
+    }
+
+    .black-key.active {
+      background: linear-gradient(180deg, var(--terracotta) 0%, #8B3A20 100%);
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.4),
+        0 0 20px rgba(199, 93, 58, 0.5);
+    }
+
+    .black-key.dimmed {
+      opacity: 0.4;
+    }
+
+    .key-label {
+      font-size: 0.7rem;
+      color: var(--wood-medium);
+      font-weight: 500;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .white-key .key-label {
+      color: var(--wood-dark);
+    }
+
+    .black-key .key-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.95);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      letter-spacing: 0.02em;
+    }
+
+    .current-chord {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      min-height: 3.5rem;
+    }
+
+    .current-chord-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--wood-medium);
+      margin-bottom: 0.3rem;
+    }
+
+    .current-chord-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--terracotta);
+      text-shadow: 2px 2px 4px var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .current-chord-name.empty {
+      font-size: 1.2rem;
+      color: var(--wood-medium);
+      opacity: 0.5;
+      font-weight: 400;
+    }
+
+    .chord-section {
+      margin-bottom: 1rem;
+    }
+
+    .chord-section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      color: var(--wood-medium);
+      margin-bottom: 0.5rem;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .chord-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      max-width: 700px;
+    }
+
+    .chord-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.6rem 1.1rem;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chord-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .chord-btn-major {
+      background: linear-gradient(135deg, var(--terracotta) 0%, #A04A2A 100%);
+      color: white;
+      box-shadow: 0 3px 10px rgba(199, 93, 58, 0.3);
+    }
+
+    .chord-btn-major:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 5px 15px rgba(199, 93, 58, 0.4);
+    }
+
+    .chord-btn-minor {
+      background: linear-gradient(135deg, var(--sage) 0%, #5A7E5E 100%);
+      color: white;
+      box-shadow: 0 3px 10px rgba(122, 158, 126, 0.3);
+    }
+
+    .chord-btn-minor:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 5px 15px rgba(122, 158, 126, 0.4);
+    }
+
+    .chord-btn-seventh {
+      background: linear-gradient(135deg, var(--marigold) 0%, #C88A20 100%);
+      color: white;
+      box-shadow: 0 3px 10px rgba(232, 168, 56, 0.3);
+    }
+
+    .chord-btn-seventh:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 5px 15px rgba(232, 168, 56, 0.4);
+    }
+
+    .chord-btn-minor7 {
+      background: linear-gradient(135deg, #8B6B4A 0%, #5A4530 100%);
+      color: white;
+      box-shadow: 0 3px 10px rgba(139, 107, 74, 0.3);
+    }
+
+    .chord-btn-minor7:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 5px 15px rgba(139, 107, 74, 0.4);
+    }
+
+    .chord-btn.active {
+      transform: translateY(-2px) scale(1.08);
+      box-shadow: 0 6px 20px var(--shadow);
+    }
+
+    .chord-btn.active::after {
+      content: '✦';
+      position: absolute;
+      top: 2px;
+      right: 6px;
+      font-size: 0.5rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--wood-medium);
+      opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+      .white-key {
+        width: 32px;
+        height: 140px;
+      }
+
+      .black-key {
+        width: 22px;
+        height: 85px;
+      }
+
+      .keyboard {
+        height: 140px;
+      }
+
+      .chord-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Harmonium Chord Guide</h1>
+    <p class="subtitle">Press a chord to see its notes</p>
+  </header>
+
+  <div class="keyboard-container">
+    <div class="keyboard" id="keyboard"></div>
+  </div>
+
+  <div class="current-chord">
+    <p class="current-chord-label">Selected Chord</p>
+    <p class="current-chord-name empty" id="currentChord">Select a chord below</p>
+  </div>
+
+  <div class="chord-section">
+    <p class="chord-section-label">Major Chords</p>
+    <div class="chord-buttons" id="majorChords"></div>
+  </div>
+
+  <div class="chord-section">
+    <p class="chord-section-label">Minor Chords</p>
+    <div class="chord-buttons" id="minorChords"></div>
+  </div>
+
+  <div class="chord-section">
+    <p class="chord-section-label">Seventh Chords</p>
+    <div class="chord-buttons" id="seventhChords"></div>
+  </div>
+
+  <div class="chord-section">
+    <p class="chord-section-label">Minor Seventh Chords</p>
+    <div class="chord-buttons" id="minor7Chords"></div>
+  </div>
+
+  <footer>
+    <p>Hindustani Music Companion</p>
+  </footer>
+
+  <script>
+    const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const WHITE_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    const BLACK_NOTES = ['C#', 'D#', 'F#', 'G#', 'A#'];
+
+    const OCTAVE_START = 3;
+    const NUM_OCTAVES = 3.5;
+    const TOTAL_KEYS = 41;
+
+    const CHORD_INTERVALS = {
+      major: [0, 4, 7],
+      minor: [0, 3, 7],
+      seventh: [0, 4, 7, 10],
+      minor7: [0, 3, 7, 10]
+    };
+
+    let keyboardState = [];
+    let activeChord = null;
+
+    function createKeyboard() {
+      const keyboard = document.getElementById('keyboard');
+      keyboard.innerHTML = '';
+
+      let noteIndex = 0;
+
+      // First pass: create all white keys
+      for (let i = 0; i < TOTAL_KEYS; i++) {
+        const octave = OCTAVE_START + Math.floor(noteIndex / 12);
+        const noteName = NOTES[noteIndex % 12];
+        const isWhite = WHITE_NOTES.includes(noteName);
+
+        if (isWhite) {
+          const key = document.createElement('div');
+          key.className = 'key white-key';
+          key.dataset.note = noteName;
+          key.dataset.octave = octave;
+          key.dataset.index = i;
+
+          const label = document.createElement('span');
+          label.className = 'key-label';
+          label.textContent = noteName + octave;
+          key.appendChild(label);
+
+          key.addEventListener('click', () => highlightChord(activeChord));
+          keyboard.appendChild(key);
+
+          keyboardState[i] = { element: key, note: noteName, octave: octave, isWhite: true };
+        }
+
+        noteIndex++;
+        if (noteIndex % 12 === 0 && noteIndex > 0) {
+          const nextNote = NOTES[noteIndex % 12];
+          if (!WHITE_NOTES.includes(nextNote) && noteIndex >= TOTAL_KEYS * 12 / 3.5 * 3) {
+            break;
+          }
+        }
+      }
+
+      // Second pass: create black keys without positions (positionBlackKeys will handle it)
+      noteIndex = 0;
+      let whiteIndex = 0;
+
+      for (let i = 0; i < TOTAL_KEYS; i++) {
+        const octave = OCTAVE_START + Math.floor(noteIndex / 12);
+        const noteName = NOTES[noteIndex % 12];
+        const isWhite = WHITE_NOTES.includes(noteName);
+
+        if (!isWhite) {
+          const key = document.createElement('div');
+          key.className = 'key black-key';
+          key.dataset.note = noteName;
+          key.dataset.octave = octave;
+          key.dataset.index = i;
+
+          const label = document.createElement('span');
+          label.className = 'key-label';
+          label.textContent = noteName.replace('#', '♯');
+          key.appendChild(label);
+
+          key.addEventListener('click', () => highlightChord(activeChord));
+          keyboard.appendChild(key);
+
+          keyboardState[i] = { element: key, note: noteName, octave: octave, isWhite: false };
+        } else {
+          whiteIndex++;
+        }
+
+        noteIndex++;
+        if (noteIndex % 12 === 0 && noteIndex > 0) {
+          const nextNote = NOTES[noteIndex % 12];
+          if (!WHITE_NOTES.includes(nextNote) && noteIndex >= TOTAL_KEYS * 12 / 3.5 * 3) {
+            break;
+          }
+        }
+      }
+
+      // Position black keys based on actual rendered white key dimensions
+      positionBlackKeys();
+    }
+
+    // Use flats for notes in lower register when it makes more sense musically
+    const FLAT_DISPLAY = { 'D#': 'Eb', 'A#': 'Bb', 'G#': 'Ab' };
+
+    function getChordNotesWithOctave(rootNote, chordType) {
+      const rootIndex = NOTES.indexOf(rootNote);
+      const intervals = CHORD_INTERVALS[chordType];
+      const notes = [];
+
+      intervals.forEach(interval => {
+        const noteIdx = (rootIndex + interval) % 12;
+        let noteName = NOTES[noteIdx];
+        // For display purposes, use flats for certain notes
+        const displayName = FLAT_DISPLAY[noteName] || noteName;
+        const octaveOffset = Math.floor((rootIndex + interval) / 12);
+        notes.push({
+          note: noteName,        // For keyboard matching (sharps)
+          display: displayName,  // For chord display (flats where appropriate)
+          octave: OCTAVE_START + octaveOffset
+        });
+      });
+
+      return notes;
+    }
+
+    function highlightChord(chordData) {
+      const chordNameEl = document.getElementById('currentChord');
+
+      document.querySelectorAll('.chord-btn').forEach(btn => btn.classList.remove('active'));
+
+      if (!chordData) {
+        document.querySelectorAll('.key').forEach(key => {
+          key.classList.remove('active', 'dimmed');
+        });
+        chordNameEl.textContent = 'Select a chord below';
+        chordNameEl.classList.add('empty');
+        return;
+      }
+
+      document.querySelectorAll('.key').forEach(key => {
+        key.classList.remove('active', 'dimmed');
+      });
+
+      const chordNotes = getChordNotesWithOctave(chordData.root, chordData.type);
+      const chordNoteNames = chordNotes.map(n => n.note);
+
+      // Highlight ALL occurrences of each chord note across all octaves
+      document.querySelectorAll('.key').forEach(key => {
+        const keyNote = key.dataset.note;
+
+        if (chordNoteNames.includes(keyNote)) {
+          key.classList.add('active');
+          key.classList.remove('dimmed');
+        } else {
+          key.classList.add('dimmed');
+          key.classList.remove('active');
+        }
+      });
+
+      const chordSymbol = chordData.type === 'major' ? '' :
+                          chordData.type === 'minor' ? 'm' :
+                          chordData.type === 'seventh' ? '7' : 'm7';
+
+      chordNameEl.textContent = chordData.root + chordSymbol;
+      chordNameEl.classList.remove('empty');
+
+      const btnText = chordData.root + chordSymbol;
+      document.querySelectorAll('.chord-btn').forEach(btn => {
+        if (btn.textContent.trim().replace('✦', '') === btnText) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function createChordButton(root, type, containerId, className) {
+      const btn = document.createElement('button');
+      const symbol = type === 'major' ? '' :
+                     type === 'minor' ? 'm' :
+                     type === 'seventh' ? '7' : 'm7';
+      btn.textContent = root + symbol;
+      btn.className = `chord-btn ${className}`;
+      btn.addEventListener('click', () => {
+        activeChord = { root, type };
+        highlightChord(activeChord);
+      });
+      document.getElementById(containerId).appendChild(btn);
+    }
+
+    function createChordButtons() {
+      ['C', 'D', 'E', 'F', 'G', 'A', 'B'].forEach(note => {
+        createChordButton(note, 'major', 'majorChords', 'chord-btn-major');
+        createChordButton(note, 'minor', 'minorChords', 'chord-btn-minor');
+        createChordButton(note, 'seventh', 'seventhChords', 'chord-btn-seventh');
+        createChordButton(note, 'minor7', 'minor7Chords', 'chord-btn-minor7');
+      });
+    }
+
+    function positionBlackKeys() {
+      const keyboard = document.getElementById('keyboard');
+      const whiteKeys = keyboard.querySelectorAll('.white-key');
+      const blackKeys = keyboard.querySelectorAll('.black-key');
+
+      if (whiteKeys.length === 0 || blackKeys.length === 0) return;
+
+      const whiteKeyWidth = whiteKeys[0].offsetWidth;
+      const whiteKeyMargin = 2;
+      const blackKeyWidth = blackKeys[0].offsetWidth;
+
+      let whiteIndex = 0;
+      let blackIndex = 0;
+
+      // Iterate through notes to find black keys and position them
+      let noteIndex = 0;
+      for (let i = 0; i < TOTAL_KEYS && blackIndex < blackKeys.length; i++) {
+        const noteName = NOTES[noteIndex % 12];
+        const isWhite = WHITE_NOTES.includes(noteName);
+
+        if (isWhite) {
+          whiteIndex++;
+        } else {
+          // Black key comes after whiteKeyIndex-1 white keys
+          // Position centered between whiteKeyIndex-1 and whiteKeyIndex
+          const leftPos = (whiteIndex - 1) * (whiteKeyWidth + whiteKeyMargin) + whiteKeyWidth - blackKeyWidth / 2;
+          blackKeys[blackIndex].style.left = leftPos + 'px';
+          blackIndex++;
+        }
+
+        noteIndex++;
+        if (noteIndex % 12 === 0 && noteIndex > 0) {
+          const nextNote = NOTES[noteIndex % 12];
+          if (!WHITE_NOTES.includes(nextNote) && noteIndex >= TOTAL_KEYS * 12 / 3.5 * 3) {
+            break;
+          }
+        }
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(() => {
+        positionBlackKeys();
+      });
+    });
+
+    createKeyboard();
+    createChordButtons();
+  </script>
+</body>
+</html>
